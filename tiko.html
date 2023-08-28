@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>URL Downloader</title>
+  <script>
+    function downloadContent() {
+      var url = document.getElementById('url').value;
+      
+      fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+          var a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'downloaded_file';
+          a.click();
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  </script>
+</head>
+<body>
+  <h1>URL Downloader</h1>
+  
+  <label for="url">Enter URL:</label>
+  <input type="text" id="url" />
+  <button onclick="downloadContent()">Download</button>
+</body>
+</html>
