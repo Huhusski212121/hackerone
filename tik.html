@@ -21,20 +21,6 @@
                 var iframeDoc = iframe.contentWindow.document;
                 var content = JSON.stringify(iframeDoc);
 
-                // Set the download URL for the captured content
-                var blob = new Blob([content], {
-                    type: "text/plain"
-                });
-                var url = URL.createObjectURL(blob);
-
-                // Trigger the automatic download
-                var link = document.createElement("a");
-                link.href = url;
-                link.download = "captured_content.json";
-                link.style.display = "none";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
             };
         }
     </script>
