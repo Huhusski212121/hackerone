@@ -1,27 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Screen and Extract Text</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js"></script> <!-- OCR Library -->
 </head>
-<body onload="submitForm()">
-    <form name='myForm' id='myForm' method="POST" target="responseFrame" action="https://www.tiktok.com/passport/open/web/auth/?client_key=awn32gkr1d27lv49&scope=user.info.basic%2Cuser.info.username%2Cuser.info.phone%2Cuser.info.email&aid=1459&source=web&redirect_uri=https%3A%2F%2Fseller-id.tiktok.com%2Faccount%2Foauth%2Ftt%2Fcallback%3Flogin_only%3D1%26page_name%3Dlog_in%26channel%3Dundefined%26redirect_url%3Dhttps%253A%252F%252Fseller-id.tiktok.com%252Fhomepage%253Fregion_check%253D1%26url_params%3D%26state%3Dmagkw&state=magkw">
-        <input type="hidden" name="contentField" value="undefined" />
-    </form>
-    <center><iframe id="responseFrame" name="responseFrame" style="width: 300px; height: 300px;"></iframe></center>
+<body>
+    <input type="text" id="urlInput" placeholder="Enter URL">
+    <button onclick="loadIframe()">Load URL</button>
+    <br><br>
+
+    <iframe id="frameID" width="800" height="400"></iframe>
+    <br>
+
+    <button onclick="captureScreen()">Capture Screen & Extract Text</button>
 
     <script>
-        function submitForm() {
-            document.getElementById('responseFrame').style.display = "block"; // show the iframe
-            document.getElementById('myForm').submit(); // submit the form
+        function loadIframe() {
+            let url = document.getElementById("urlInput").value;
+            document.getElementById("frameID").src = url;
+        }
 
-            // capture the content from the iframe
-            var iframe = document.getElementById('responseFrame');
-            iframe.onload = function() {
-                var iframeDoc = iframe.contentWindow.document;
-                var content = JSON.stringify(iframeDoc);
+        async function captureScreen() {
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                const video = document.createElement("video");
 
-            };
+                video.srcObject = stream;
+                video.play();
+
+                video.onloadedmetadata = async () => {
+                    // Create a canvas
+                    const canvas = document.createElement("canvas");
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    const ctx = canvas.getContext("2d");
+
+                    // Draw the current video frame to the canvas
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    stream.getTracks().forEach(track => track.stop()); // Stop screen sharing
+
+                    // Show the screenshot on the page for reference
+                    document.body.appendChild(canvas);
+
+                    // Run OCR to extract text
+                    extractTextFromImage(canvas);
+                };
+            } catch (error) {
+                alert("Screen capture failed: " + error);
+            }
+        }
+
+        function extractTextFromImage(canvas) {
+            Tesseract.recognize(
+                canvas.toDataURL(), 
+                'eng', 
+                {
+                    logger: m => console.log(m) 
+                }
+            ).then(({ data: { text } }) => {
+                alert("Extracted Text: " + text);
+            }).catch(error => {
+                alert("Error in OCR: " + error);
+            });
         }
     </script>
 </body>
