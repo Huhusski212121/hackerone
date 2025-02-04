@@ -1,1 +1,68 @@
-{"test":"<a href='https://evil.com'>click</a>"}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Capture Screen and Extract Text</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js"></script> <!-- OCR Library -->
+</head>
+<body>
+    <input type="text" id="urlInput" placeholder="Enter URL">
+    <button onclick="loadIframe()">Load URL</button>
+    <br><br>
+
+    <iframe id="frameID" width="800" height="400"></iframe>
+    <br>
+
+    <button onclick="captureScreen()">Capture Screen & Extract Text</button>
+
+    <script>
+        function loadIframe() {
+            let url = document.getElementById("urlInput").value;
+            document.getElementById("frameID").src = url;
+        }
+
+        async function captureScreen() {
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                const video = document.createElement("video");
+
+                video.srcObject = stream;
+                video.play();
+
+                video.onloadedmetadata = async () => {
+                    // Create a canvas
+                    const canvas = document.createElement("canvas");
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    const ctx = canvas.getContext("2d");
+
+                    // Draw the current video frame to the canvas
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    stream.getTracks().forEach(track => track.stop()); // Stop screen sharing
+
+                    // Show the screenshot on the page for reference
+                    document.body.appendChild(canvas);
+
+                    // Run OCR to extract text
+                    extractTextFromImage(canvas);
+                };
+            } catch (error) {
+                alert("Screen capture failed: " + error);
+            }
+        }
+
+        function extractTextFromImage(canvas) {
+            Tesseract.recognize(
+                canvas.toDataURL(), 
+                'eng', 
+                {
+                    logger: m => console.log(m) 
+                }
+            ).then(({ data: { text } }) => {
+                alert("Extracted Text: " + text);
+            }).catch(error => {
+                alert("Error in OCR: " + error);
+            });
+        }
+    </script>
+</body>
+</html>
